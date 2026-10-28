@@ -1,12 +1,11 @@
 import mongoose from "mongoose";
 
+// A login request from the landing page (name, email, company). No user account / password.
 const AccessRequestSchema = new mongoose.Schema(
   {
-    type: { type: String, enum: ["login", "signup"], required: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    name: String,
-    email: { type: String, lowercase: true },
-    company: String,
+    name: { type: String, trim: true, required: true },
+    email: { type: String, lowercase: true, trim: true, required: true },
+    company: { type: String, trim: true, required: true },
     status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
     statusKey: { type: String, required: true },
     consumed: { type: Boolean, default: false },

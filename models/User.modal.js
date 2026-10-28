@@ -8,8 +8,7 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, trim: true, lowercase: true },
     password: { type: String, required: true },
     company: { type: String, trim: true },
-    role: { type: String, enum: ["Visitor", "Admin"], default: "Visitor" },
-    status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+    role: { type: String, enum: ["Admin"], default: "Admin" }, // admin panel users only
     // forgot-password OTP (stored hashed, never returned by the API)
     resetOtpHash: { type: String, select: false },
     resetOtpExpires: { type: Date, select: false },

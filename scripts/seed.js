@@ -10,7 +10,7 @@ await connectDB();
 const email = process.env.ADMIN_EMAIL.toLowerCase();
 if (!(await User.findOne({ email }))) {
   await User.create({
-    name: "Admin", email, company: "AUCTECH MARCOM", role: "Admin", status: "approved",
+    name: "Admin", email, company: "AUCTECH MARCOM", role: "Admin",
     password: await bcrypt.hash(process.env.ADMIN_PASSWORD, 10),
   });
   console.log("✅ Admin created:", email);

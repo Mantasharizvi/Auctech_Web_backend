@@ -6,12 +6,12 @@ import { apiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asynchandler.js";
 import { sendEmail } from "../utils/sendEmail.js";
 
-// Forgot password for BOTH the landing page (role "Visitor") and the admin panel (role "Admin").
+// Forgot password for the admin panel only (landing page has no passwords).
 const OTP_MINUTES = 10;
 const RESEND_SECONDS = 30;
 const MAX_ATTEMPTS = 5;
 
-const roleOf = (r) => (r === "Admin" ? "Admin" : "Visitor");
+const ADMIN = "Admin";
 const emailOf = (e) => String(e || "").trim().toLowerCase();
 const hashOtp = (email, otp) =>
   crypto.createHash("sha256").update(`${email}:${otp}:${process.env.JWT_SECRET}`).digest("hex");
@@ -24,7 +24,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   if (!/^\S+@\S+\.\S+$/.test(email))
     return res.status(400).json(new apiResponse(400, null, "Please enter a valid email"));
 
-  const user = await User.findOne({ email, role: roleOf(req.body.role) }).select("+resetOtpSentAt");
+  const user = await User.findOne({ email, role: ADMIN }).select("+resetOtpSentAt");
   if (!user) return res.status(404).json(new apiResponse(404, null, "Email is not registered"));
 
   const wait = user.resetOtpSentAt ? RESEND_SECONDS - Math.floor((Date.now() - user.resetOtpSentAt) / 1000) : 0;
@@ -62,7 +62,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 const verifyOtp = asyncHandler(async (req, res) => {
   const email = emailOf(req.body.email);
   const otp = String(req.body.otp || "").trim();
-  const user = await User.findOne({ email, role: roleOf(req.body.role) })
+  const user = await User.findOne({ email, role: ADMIN })
     .select("+resetOtpHash +resetOtpExpires +resetOtpAttempts +password");
   if (!user || !user.resetOtpHash)
     return res.status(400).json(new apiResponse(400, null, "Please request a new OTP"));

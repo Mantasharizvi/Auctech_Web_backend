@@ -9,7 +9,7 @@ const routes = Router();
 routes.route("/loginWithPassword").post(authLimiter, loginWithPassword);
 routes.route("/profile").get(verifyJWT, getProfile);
 
-// Forgot password (landing page users + admin panel). Body has role: "Visitor" | "Admin"
+// Forgot password (admin panel only)
 routes.route("/forgot-password").post(authLimiter, forgotPassword);
 routes.route("/verify-otp").post(authLimiter, verifyOtp);
 routes.route("/reset-password").post(authLimiter, resetPassword);
